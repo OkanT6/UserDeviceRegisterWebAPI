@@ -363,5 +363,5 @@ MigrationBackup/
 FodyWeavers.xsd
 
 # App settings files
-Presentation/OnionForceSpin.API/appsettings.json
-Presentation/OnionForceSpin.API/appsettings.*.json
+Presentation/EruMobil.API/appsettings.json
+Presentation/EruMobil.API/appsettings.*.json

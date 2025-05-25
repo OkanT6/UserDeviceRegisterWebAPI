@@ -1,0 +1,6 @@
+@EruMobil.API_HostAddress = http://localhost:5032
+
+GET {{EruMobil.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

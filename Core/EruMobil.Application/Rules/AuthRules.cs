@@ -28,5 +28,7 @@ namespace EruMobil.Application.Rules
             if (DateTime.Now >= expiryDate) throw new RefreshTokenShouldNotBeExpiredException();
             return Task.CompletedTask;
         }
+
+
     }
 }

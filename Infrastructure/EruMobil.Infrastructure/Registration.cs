@@ -1,4 +1,4 @@
-﻿using EruMobil.Application.Interfaces;
+﻿using EruMobil.Application.Interfaces.MersisAPIs;
 using EruMobil.Application.Interfaces.Tokens;
 using EruMobil.Infrastructure.MersisAPIs;
 using EruMobil.Infrastructure.Tokens;

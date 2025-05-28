@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EruMobil.Application.Interfaces
+namespace EruMobil.Application.Interfaces.MersisAPIs
 {
     public interface IMersisAPI
     {
-        Task<bool> IsTcIsValid(string TCNo);
+        Task IsTcIsValidAsync(string TCNo);
     }
 }

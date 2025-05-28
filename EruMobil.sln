@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EruMobil.Persistence", "Inf
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EruMobil.API", "Presentation\EruMobil.API\EruMobil.API.csproj", "{81C4FCB1-C99A-48DD-A386-9497CD5AB046}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EruMobil.Mapper", "EruMobil.Mapper\EruMobil.Mapper.csproj", "{C65E0E94-3AD8-41FF-848F-D0B973563E1C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{81C4FCB1-C99A-48DD-A386-9497CD5AB046}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{81C4FCB1-C99A-48DD-A386-9497CD5AB046}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{81C4FCB1-C99A-48DD-A386-9497CD5AB046}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C65E0E94-3AD8-41FF-848F-D0B973563E1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C65E0E94-3AD8-41FF-848F-D0B973563E1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C65E0E94-3AD8-41FF-848F-D0B973563E1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C65E0E94-3AD8-41FF-848F-D0B973563E1C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -55,5 +61,6 @@ Global
 		{057F426E-ECA3-4618-AE8C-E5BA2C239E7E} = {8F744A94-5E67-4F46-8897-9FA02F568D6D}
 		{FEB094F1-ED14-48F0-B32B-0D1866AAF716} = {8F744A94-5E67-4F46-8897-9FA02F568D6D}
 		{81C4FCB1-C99A-48DD-A386-9497CD5AB046} = {9E6F09C1-5817-43F2-B3B2-40356E72F9A0}
+		{C65E0E94-3AD8-41FF-848F-D0B973563E1C} = {53DAF5FE-20EE-4495-80BB-F938E967B556}
 	EndGlobalSection
 EndGlobal

@@ -8,10 +8,18 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <ProjectReference Include="..\..\Core\EruMobil.Application\EruMobil.Application.csproj" />
+    <ProjectReference Include="..\..\EruMobil.Mapper\EruMobil.Mapper.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\EruMobil.Infrastructure\EruMobil.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\EruMobil.Persistence\EruMobil.Persistence.csproj" />
   </ItemGroup>
 
 </Project>

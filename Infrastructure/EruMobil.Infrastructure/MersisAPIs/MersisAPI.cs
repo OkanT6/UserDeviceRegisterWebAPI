@@ -1,4 +1,5 @@
-﻿using EruMobil.Application.Interfaces;
+﻿using EruMobil.Application.Features.Auth.Exceptions;
+using EruMobil.Application.Interfaces.MersisAPIs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,13 +10,13 @@ namespace EruMobil.Infrastructure.MersisAPIs
 {
     public class MersisAPI : IMersisAPI
     {
-        public Task<bool> IsTcIsValid(string TCNo)
+        public Task IsTcIsValidAsync(string TCNo)
         {
             if(string.IsNullOrEmpty(TCNo) || TCNo.Length != 11 || !long.TryParse(TCNo, out _))
             {
-                return Task.FromResult(false);
+                throw new TCNoIsNotValidException();
             }
-            return Task.FromResult(true);
+            return Task.CompletedTask;
         }
     }
 }

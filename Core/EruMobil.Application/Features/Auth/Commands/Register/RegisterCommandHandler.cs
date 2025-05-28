@@ -1,5 +1,6 @@
 ﻿using EruMobil.Application.Bases;
 using EruMobil.Application.Interfaces.AutoMapper;
+using EruMobil.Application.Interfaces.MersisAPIs;
 using EruMobil.Application.Interfaces.Repositories;
 using EruMobil.Application.Interfaces.Tokens;
 using EruMobil.Application.Interfaces.UnitOfWorks;
@@ -21,13 +22,15 @@ namespace EruMobil.Application.Features.Auth.Commands.Register
 {
     public class RegisterCommandHandler : BaseHandler, IRequestHandler<RegisterCommandRequest, RegisterCommandResponse>
     {
+        private readonly IMersisAPI mersisAPI;
         private readonly IConfiguration configuration;
         private readonly ITokenService tokenService;
         private readonly AuthRules authRules;
         private readonly UserManager<User> userManager;
         private readonly RoleManager<Role> roleManager;
-        public RegisterCommandHandler(IConfiguration configuration, ITokenService tokenService,AuthRules authRules, UserManager<User> userManager, RoleManager<Role> roleManager,IMapper mapper, IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor) : base(mapper, unitOfWork, httpContextAccessor)
+        public RegisterCommandHandler(IMersisAPI mersisAPI,IConfiguration configuration, ITokenService tokenService,AuthRules authRules, UserManager<User> userManager, RoleManager<Role> roleManager,IMapper mapper, IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor) : base(mapper, unitOfWork, httpContextAccessor)
         {
+            this.mersisAPI = mersisAPI;
             this.configuration = configuration;
             this.tokenService = tokenService;
             this.authRules = authRules;
@@ -37,6 +40,8 @@ namespace EruMobil.Application.Features.Auth.Commands.Register
 
         public async Task<RegisterCommandResponse> Handle(RegisterCommandRequest request, CancellationToken cancellationToken)
         {
+            await mersisAPI.IsTcIsValidAsync(request.TCNo);
+
             string registerTypeTarget = request.UserType.ToLower();
 
             var existingUser = await userManager.Users

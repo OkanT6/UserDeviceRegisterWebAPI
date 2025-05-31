@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EruMobil.Application.Rules
+namespace EruMobil.Application.Features.Auth.Rules
 {
     public class AuthRules : BaseRules
     {
@@ -29,6 +29,12 @@ namespace EruMobil.Application.Rules
             return Task.CompletedTask;
         }
 
+
+        public Task UserShoulExists(User user)
+        {
+            if (user is null) throw new UserNotFoundException();
+            return Task.CompletedTask;
+        }
 
     }
 }

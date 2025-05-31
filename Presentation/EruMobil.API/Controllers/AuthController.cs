@@ -1,5 +1,8 @@
-﻿using EruMobil.Application.Features.Auth.Commands.Register;
+﻿using EruMobil.Application.Features.Auth.Commands.Login;
+using EruMobil.Application.Features.Auth.Commands.Register;
+using EruMobil.Application.Features.Auth.Commands.Revoke;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -35,10 +38,27 @@ namespace EruMobil.API.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult Test()
         {
             return Ok("Controller çalışıyor!");
         }
+
+        [HttpPost]
+        public async Task<IActionResult> LoginStudent([FromBody] LoginCommandRequest request)
+        {
+            var result = await mediator.Send(request);
+            return Ok(result);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> LogoutStudent([FromBody] RevokeCommandRequest request)
+        {
+            var result = await mediator.Send(request);
+            return Ok(result);
+        }
+
+
 
         //[HttpPost]
         //public async Task<IActionResult> Register2([FromBody] RegisterCommandRequest request)

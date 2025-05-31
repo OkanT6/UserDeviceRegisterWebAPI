@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EruMobil.Domain.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EruMobil.Domain.Entities
 {
-    public class Device
+    public class Device:IEntityBase
     {
         public Guid Id { get; set; } // Primary key
 
@@ -23,4 +24,6 @@ namespace EruMobil.Domain.Entities
 
         public User User { get; set; }
     }
+
+    
 }

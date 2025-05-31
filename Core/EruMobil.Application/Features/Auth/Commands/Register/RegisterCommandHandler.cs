@@ -1,10 +1,10 @@
 ﻿using EruMobil.Application.Bases;
+using EruMobil.Application.Features.Auth.Rules;
 using EruMobil.Application.Interfaces.AutoMapper;
 using EruMobil.Application.Interfaces.MersisAPIs;
 using EruMobil.Application.Interfaces.Repositories;
 using EruMobil.Application.Interfaces.Tokens;
 using EruMobil.Application.Interfaces.UnitOfWorks;
-using EruMobil.Application.Rules;
 using EruMobil.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Http;

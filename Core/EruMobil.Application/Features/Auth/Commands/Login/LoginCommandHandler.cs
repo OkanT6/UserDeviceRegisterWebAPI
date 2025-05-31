@@ -2,7 +2,6 @@
 using EruMobil.Application.Interfaces.AutoMapper;
 using EruMobil.Application.Interfaces.Tokens;
 using EruMobil.Application.Interfaces.UnitOfWorks;
-using EruMobil.Application.Rules;
 using EruMobil.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -15,7 +14,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using EruMobil.Application.Rules;
+using EruMobil.Application.Features.Auth.Rules;
 
 namespace EruMobil.Application.Features.Auth.Commands.Login
 {
@@ -48,9 +47,10 @@ namespace EruMobil.Application.Features.Auth.Commands.Login
             _ = int.TryParse(configuration["Jwt:RefreshTokenValidityInDays"], out int refreshTokenValidityInDays);
 
             user.RefreshToken = refreshToken;
-            user.RefreshTokenEndDate = DateTime.Now.AddDays(refreshTokenValidityInDays);
+            user.RefreshTokenEndDate = DateTime.UtcNow.AddDays(refreshTokenValidityInDays);
 
             await userManager.UpdateAsync(user);
+
             await userManager.UpdateSecurityStampAsync(user);
 
             string _token = new JwtSecurityTokenHandler().WriteToken(token);

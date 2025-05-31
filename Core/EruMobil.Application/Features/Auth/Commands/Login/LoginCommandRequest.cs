@@ -10,7 +10,7 @@ namespace EruMobil.Application.Features.Auth.Commands.Login
 {
     public class LoginCommandRequest:IRequest<LoginCommandResponse>
     {
-        [DefaultValue("1030519999")]
+        [DefaultValue("1030511385")]
         public string StudentNumber { get; set; }
         [DefaultValue("Okan1234")]
 

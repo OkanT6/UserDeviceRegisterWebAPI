@@ -78,6 +78,17 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+// 🔥 CORS EKLENİYOR
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.WithOrigins("http://192.168.43.135:5000", "https://192.168.43.135:5001")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

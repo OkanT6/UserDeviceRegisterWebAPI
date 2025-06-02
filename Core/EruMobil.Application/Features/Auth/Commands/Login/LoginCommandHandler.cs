@@ -34,9 +34,12 @@ namespace EruMobil.Application.Features.Auth.Commands.Login
 
         public async Task<LoginCommandResponse> Handle(LoginCommandRequest request, CancellationToken cancellationToken)
         {
+            
             User user = await userManager.Users.FirstOrDefaultAsync(u=>u.BusinessIdentifier==request.StudentNumber);
             bool chechPassword = await userManager.CheckPasswordAsync(user, request.Password);
             await authRules.StudentNumberAndPasswordShouldBeMatched(user, chechPassword);
+
+            await authRules.LoginedDeviceMustBeMatchedOrNotRegistered(user,request);
 
             IList<string> roles = await userManager.GetRolesAsync(user);
 

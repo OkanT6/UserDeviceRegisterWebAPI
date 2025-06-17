@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace EruMobil.Domain.Entities
 {
-    public class User: IdentityUser<Guid>,IEntityBase
+    public class User: IEntityBase
     {
         
         public User()
@@ -17,6 +17,8 @@ namespace EruMobil.Domain.Entities
             CreatedDate = DateTime.UtcNow;
             IsDeleted = false;
         }
+        public Guid Id { get; set; } // Primary key
+        //public string? AccessToken { get; set; }
 
         //public string? StudentNumber { get; set; }
 
@@ -26,15 +28,15 @@ namespace EruMobil.Domain.Entities
 
         public string? access_token_when_register { get; set; }
 
-        public string TCNo { get; set; }
+        //public string TCNo { get; set; }
 
         public ICollection<Device> Devices { get; set; }
 
         public string FullName { get; set; }
 
-        public string? RefreshToken { get; set; }
+        //public string? RefreshToken { get; set; }
 
-        public DateTime? RefreshTokenEndDate { get; set; }
+        //public DateTime? RefreshTokenEndDate { get; set; }
 
         public DateTime CreatedDate { get; set; }
 

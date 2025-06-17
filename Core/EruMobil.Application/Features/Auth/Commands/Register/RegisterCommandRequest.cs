@@ -17,15 +17,10 @@ namespace EruMobil.Application.Features.Auth.Commands.Register
 
         public string FullName { get; set; }
 
-        public string TCNo { get; set; }
-
         public string BusinessIdentifier { get; set; }
 
         public string UserType { get; set; }
 
-        public string Password { get; set; }
-
-        public string ConfirmPassword { get; set; }
 
         //[OnDeserialized]
         //internal void OnDeserializedMethod(StreamingContext context)

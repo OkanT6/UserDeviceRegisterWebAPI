@@ -23,6 +23,8 @@ namespace EruMobil.Domain.Entities
         public Guid UserId { get; set; } // Foreign Key
 
         public User User { get; set; }
+
+
     }
 
     

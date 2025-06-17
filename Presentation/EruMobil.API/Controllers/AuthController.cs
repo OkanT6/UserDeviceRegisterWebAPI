@@ -1,6 +1,4 @@
-﻿using EruMobil.Application.Features.Auth.Commands.Login;
-using EruMobil.Application.Features.Auth.Commands.Register;
-using EruMobil.Application.Features.Auth.Commands.Revoke;
+﻿using EruMobil.Application.Features.Auth.Commands.Register;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -19,18 +17,18 @@ namespace EruMobil.API.Controllers
             this.mediator = mediator;
         }
 
-        
 
         [HttpPost]
-        public async Task<IActionResult> RegisterStudent([FromBody] RegisterCommandRequest request)
+        public async Task<IActionResult> CreateStudent([FromBody] RegisterCommandRequest request)
         {
+            //obisisAPI(request.token);
             request.UserType = "student"; // UserType'ı student olarak ayarla
             var result = await mediator.Send(request);
             return Ok(result);
         }
 
         [HttpPost]
-        public async Task<IActionResult> RegisterStaff([FromBody] RegisterCommandRequest request)
+        public async Task<IActionResult> CreateStaff([FromBody] RegisterCommandRequest request)
         {
             request.UserType = "staff"; // UserType'ı staff olarak ayarla
             var result = await mediator.Send(request);
@@ -44,19 +42,19 @@ namespace EruMobil.API.Controllers
             return Ok("Controller çalışıyor!");
         }
 
-        [HttpPost]
-        public async Task<IActionResult> LoginStudent([FromBody] LoginCommandRequest request)
-        {
-            var result = await mediator.Send(request);
-            return Ok(result);
-        }
+        //[HttpPost]
+        //public async Task<IActionResult> RegisterDevice([FromBody] LoginCommandRequest request)
+        //{
+        //    var result = await mediator.Send(request);
+        //    return Ok(result);
+        //}
 
-        [HttpPost]
-        public async Task<IActionResult> LogoutStudent([FromBody] RevokeCommandRequest request)
-        {
-            var result = await mediator.Send(request);
-            return Ok(result);
-        }
+        //[HttpPost]
+        //public async Task<IActionResult> LogoutStudent([FromBody] RevokeCommandRequest request)
+        //{
+        //    var result = await mediator.Send(request);
+        //    return Ok(result);
+        //}
 
 
 

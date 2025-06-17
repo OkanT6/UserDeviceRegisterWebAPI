@@ -21,7 +21,6 @@
 
   <ItemGroup>
     <Folder Include="DTOs\" />
-    <Folder Include="Features\Auth\Commands\RevokeAll\" />
     <Folder Include="Features\Auth\Queries\" />
     <Folder Include="Features\Devices\Queries\" />
   </ItemGroup>

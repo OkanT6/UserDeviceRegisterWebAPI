@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace EruMobil.Persistence.Context
 {
-    public class AppDbContext : IdentityDbContext<User, Role, Guid>
+    public class AppDbContext : DbContext
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
@@ -18,7 +18,6 @@ namespace EruMobil.Persistence.Context
 
         public DbSet<User> Users { get; set; }
         public DbSet<Device> Devices { get; set; }
-        public DbSet<Role> Roles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

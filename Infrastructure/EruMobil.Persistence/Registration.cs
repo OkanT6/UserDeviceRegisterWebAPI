@@ -28,18 +28,18 @@ namespace EruMobil.Persistence
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-            services.AddIdentityCore<User>(opt =>
-            {
-                opt.User.RequireUniqueEmail = true;
-                opt.SignIn.RequireConfirmedAccount = false;
-                opt.Password.RequireDigit = false;
-                opt.Password.RequiredLength = 6;
-                opt.Password.RequireNonAlphanumeric = false;
-                opt.Password.RequireUppercase = false;
-                opt.Password.RequireLowercase = false;
-            })
-                .AddRoles<Role>()
-                .AddEntityFrameworkStores<AppDbContext>();
+            //services.AddIdentityCore<User>(opt =>
+            //{
+            //    opt.User.RequireUniqueEmail = true;
+            //    opt.SignIn.RequireConfirmedAccount = false;
+            //    opt.Password.RequireDigit = false;
+            //    opt.Password.RequiredLength = 6;
+            //    opt.Password.RequireNonAlphanumeric = false;
+            //    opt.Password.RequireUppercase = false;
+            //    opt.Password.RequireLowercase = false;
+            //})
+            //    .AddRoles<Role>()
+            //    .AddEntityFrameworkStores<AppDbContext>();
 
         }
     }

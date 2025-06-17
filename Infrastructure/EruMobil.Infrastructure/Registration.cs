@@ -1,7 +1,5 @@
-﻿using EruMobil.Application.Interfaces.MersisAPIs;
-using EruMobil.Application.Interfaces.Tokens;
-using EruMobil.Infrastructure.MersisAPIs;
-using EruMobil.Infrastructure.Tokens;
+﻿using EruMobil.Application.Interfaces.ObisisService;
+using EruMobil.Infrastructure.TokenValidatorService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,13 +16,13 @@ namespace EruMobil.Infrastructure
     {
         public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddScoped<IMersisAPI,MersisAPI>();
+            services.AddSingleton<IObisisAPI, ObisisAPI>();
 
-            services.Configure<TokenSettings>(options =>
-            {
-                configuration.GetSection("JWT").Bind(options);
-            });
-            services.AddScoped<ITokenService, TokenService>();
+            services.AddSingleton<IPeyosisAPI, PeyosisAPI>();
+
+
+
+            
 
             services.AddAuthentication(options =>
             {
@@ -45,6 +43,8 @@ namespace EruMobil.Infrastructure
                     ClockSkew = TimeSpan.Zero // Remove the delay of token when expired
                 };
             });
+
+
 
             //// Redis ayarlarını ekle
             //services.Configure<RedisCacheSettings>(configuration.GetSection("RedisCacheSettings"));

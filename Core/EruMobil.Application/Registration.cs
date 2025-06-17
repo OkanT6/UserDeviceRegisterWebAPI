@@ -1,6 +1,7 @@
 ﻿using EruMobil.Application.Bases;
 using EruMobil.Application.Behaviors;
 using EruMobil.Application.Exceptions;
+using EruMobil.Application.Interfaces.ObisisService;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,6 +12,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+
+
+
 
 namespace EruMobil.Application
 {

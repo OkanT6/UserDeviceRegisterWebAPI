@@ -15,6 +15,10 @@ namespace EruMobil.Application.Features.Devices.Commands.RegisterDevice
         public string Platform { get; set; } // "android" veya "ios"
         public string FcmToken { get; set; }
         public string AppVersion { get; set; }
+
+        public string AccesToken { get; set; }
+
+        public string UserType { get; set; } // "student" veya "staff"
     }
 
     /*

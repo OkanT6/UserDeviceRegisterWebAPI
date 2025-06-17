@@ -21,15 +21,15 @@ namespace EruMobil.Application.Features.Auth.Commands.Register
             RuleFor(x => x.BusinessIdentifier)
                 .NotEmpty().WithMessage("BusinessIdentifier is required")
                 .WithName("BusinessIdentifier");
-            RuleFor(x => x.Password)
-                .NotEmpty().WithMessage("Password is required")
-                .MinimumLength(6).WithMessage("Password must be at least 6 characters long")
-                .MaximumLength(20).WithMessage("Password must not exceed 20 characters")
-                .WithName("Password");
-            RuleFor(x => x.ConfirmPassword)
-                .NotEmpty().WithMessage("Confirm Password is required")
-                .Equal(x => x.Password).WithMessage("Password and Confirm Password do not match")
-                .WithName("Confirm Password");
+            //RuleFor(x => x.Password)
+            //    .NotEmpty().WithMessage("Password is required")
+            //    .MinimumLength(6).WithMessage("Password must be at least 6 characters long")
+            //    .MaximumLength(20).WithMessage("Password must not exceed 20 characters")
+            //    .WithName("Password");
+            //RuleFor(x => x.ConfirmPassword)
+            //    .NotEmpty().WithMessage("Confirm Password is required")
+            //    .Equal(x => x.Password).WithMessage("Password and Confirm Password do not match")
+            //    .WithName("Confirm Password");
             RuleFor(x => x.UserType)
                 .NotEmpty().WithMessage("User Type is required");
 

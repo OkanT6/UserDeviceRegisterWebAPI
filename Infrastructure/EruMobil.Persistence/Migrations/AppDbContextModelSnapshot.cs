@@ -24,9 +24,11 @@ namespace EruMobil.Persistence.Migrations
 
             modelBuilder.Entity("EruMobil.Domain.Entities.Device", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AppVersion")
                         .IsRequired()
@@ -41,9 +43,6 @@ namespace EruMobil.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<bool>("NotificationsIsActive")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("Platform")
                         .IsRequired()
                         .HasColumnType("text");
@@ -52,8 +51,8 @@ namespace EruMobil.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -64,9 +63,11 @@ namespace EruMobil.Persistence.Migrations
 
             modelBuilder.Entity("EruMobil.Domain.Entities.User", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("BusinessIdentifier")
                         .IsRequired()
@@ -78,6 +79,9 @@ namespace EruMobil.Persistence.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("NotificationsIsActive")
                         .HasColumnType("boolean");
 
                     b.Property<string>("UserType")

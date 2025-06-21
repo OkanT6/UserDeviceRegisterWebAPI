@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EruMobil.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250621081418_mig_9")]
-    partial class mig_9
+    [Migration("20250621170127_mig_1")]
+    partial class mig_1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,9 +27,11 @@ namespace EruMobil.Persistence.Migrations
 
             modelBuilder.Entity("EruMobil.Domain.Entities.Device", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AppVersion")
                         .IsRequired()
@@ -44,9 +46,6 @@ namespace EruMobil.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<bool>("NotificationBelIsActive")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("Platform")
                         .IsRequired()
                         .HasColumnType("text");
@@ -55,8 +54,8 @@ namespace EruMobil.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -67,9 +66,11 @@ namespace EruMobil.Persistence.Migrations
 
             modelBuilder.Entity("EruMobil.Domain.Entities.User", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("BusinessIdentifier")
                         .IsRequired()
@@ -80,11 +81,10 @@ namespace EruMobil.Persistence.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("FullName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("NotificationsIsActive")
                         .HasColumnType("boolean");
 
                     b.Property<string>("UserType")

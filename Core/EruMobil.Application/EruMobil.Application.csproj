@@ -22,6 +22,7 @@
   <ItemGroup>
     <Folder Include="DTOs\" />
     <Folder Include="Features\Auth\Queries\" />
+    <Folder Include="Features\Devices\Exceptions\" />
     <Folder Include="Features\Devices\Queries\" />
   </ItemGroup>
 

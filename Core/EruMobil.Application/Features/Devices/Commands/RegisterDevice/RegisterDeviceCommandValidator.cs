@@ -7,13 +7,16 @@ using System.Threading.Tasks;
 
 namespace EruMobil.Application.Features.Devices.Commands.RegisterDevice
 {
-    public class RegisterDeviceCommandValidator:AbstractValidator<RegisterDeviceCommandRequest>
+    public class RegisterDeviceCommandValidator : AbstractValidator<RegisterDeviceCommandRequest>
     {
         public RegisterDeviceCommandValidator()
         {
             //RuleFor(x => x.UserId)
             //    .NotEmpty().WithMessage("User ID cannot be empty.")
             //    .Must(x => x != Guid.Empty).WithMessage("User ID must be a valid GUID.");
+
+
+
             RuleFor(x => x.UniqueDeviceIdentifier)
                 .NotEmpty().WithMessage("Unique Device Identifier cannot be empty.")
                 .Length(1, 100).WithMessage("Unique Device Identifier must be between 1 and 100 characters long.");
@@ -29,6 +32,12 @@ namespace EruMobil.Application.Features.Devices.Commands.RegisterDevice
             RuleFor(x => x.AppVersion)
                 .NotEmpty().WithMessage("App Version cannot be empty.")
                 .Length(1, 50).WithMessage("App Version must be between 1 and 50 characters long.");
+            RuleFor(x => x.AccesToken)
+                .NotEmpty().WithMessage("AccesToken cannot be empty.");
+            RuleFor(x => x.BusinessIdentifier)
+                .NotEmpty().WithMessage("BusinessIdentifier cannot be empty.")
+                .Matches(@"^\d{10}$").WithMessage("BusinessIdentifier must be exactly 11 digits and contain only numbers.");
+
 
         }
     }

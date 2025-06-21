@@ -17,7 +17,7 @@ namespace EruMobil.Domain.Entities
             CreatedDate = DateTime.UtcNow;
             IsDeleted = false;
         }
-        public Guid Id { get; set; } // Primary key
+        public int Id { get; set; } // Primary key
         //public string? AccessToken { get; set; }
 
         //public string? StudentNumber { get; set; }
@@ -37,6 +37,8 @@ namespace EruMobil.Domain.Entities
         //public string? RefreshToken { get; set; }
 
         //public DateTime? RefreshTokenEndDate { get; set; }
+
+        public bool NotificationsIsActive { get; set; }
 
         public DateTime CreatedDate { get; set; }
 

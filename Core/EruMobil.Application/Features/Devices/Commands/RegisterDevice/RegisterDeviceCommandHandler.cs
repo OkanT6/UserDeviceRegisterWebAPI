@@ -50,7 +50,7 @@ namespace EruMobil.Application.Features.Devices.Commands.RegisterDevice
 
             // 2. Kullanıcıyı BusinessIdentifier üzerinden ara
             var userRepo = unitOfWork.GetReadRepository<User>();
-            var existingUser = await userRepo.GetAsync(x => x.BusinessIdentifier == request.BusinessIdentifier);
+            var existingUser = await userRepo.GetAsync(x => x.BusinessIdentifier == request.BusinessIdentifier,enableTracking:true);
 
             // 3. Kullanıcı yoksa oluştur
             if (existingUser == null)
@@ -59,7 +59,8 @@ namespace EruMobil.Application.Features.Devices.Commands.RegisterDevice
                 {
                     BusinessIdentifier = request.BusinessIdentifier,
                     UserType = request.UserType,
-                    access_token_when_register = request.AccesToken
+                    access_token_when_register = request.AccesToken,
+                    NotificationsIsActive = request.NotificationBelIsActive
                 };
 
                 await unitOfWork.GetWriteRepository<User>().AddAsync(existingUser);
@@ -70,12 +71,12 @@ namespace EruMobil.Application.Features.Devices.Commands.RegisterDevice
             var deviceRepo = unitOfWork.GetReadRepository<Device>();
             var existingDevice = await deviceRepo.GetAsync(x =>
                 x.UniqueDeviceIdentifier == request.UniqueDeviceIdentifier &&
-                x.UserId == existingUser.Id, enableTracking: true);
+                x.UserId == existingUser.Id, enableTracking: false);
 
             if (existingDevice != null)
             {
                 // 5. Cihaz zaten varsa sadece bildirimi güncelle
-                existingDevice.NotificationsIsActive = request.NotificationBelIsActive;
+                existingUser.NotificationsIsActive = request.NotificationBelIsActive;
                 await unitOfWork.SaveAsync();
             }
             else
@@ -83,7 +84,6 @@ namespace EruMobil.Application.Features.Devices.Commands.RegisterDevice
                 // 6. Yeni cihaz ekle
                 var device = mapper.Map<Device, RegisterDeviceCommandRequest>(request);
                 device.UserId = existingUser.Id;
-                device.NotificationsIsActive = request.NotificationBelIsActive;
 
                 await unitOfWork.GetWriteRepository<Device>().AddAsync(device);
                 await unitOfWork.SaveAsync();

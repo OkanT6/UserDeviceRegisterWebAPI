@@ -9,7 +9,7 @@ namespace EruMobil.Domain.Entities
 {
     public class Device:IEntityBase
     {
-        public Guid Id { get; set; } // Primary key
+        public int Id { get; set; } // Primary key
 
         public string DeviceName { get; set; }
         public string UniqueDeviceIdentifier { get; set; }
@@ -20,11 +20,10 @@ namespace EruMobil.Domain.Entities
 
         public string AppVersion { get; set; }
 
-        public Guid UserId { get; set; } // Foreign Key
+        public int UserId { get; set; } // Foreign Key
 
         public User User { get; set; }
 
-        public bool NotificationsIsActive { get; set; }
 
 
     }

@@ -24,6 +24,8 @@ namespace EruMobil.Domain.Entities
 
         public User User { get; set; }
 
+        public bool NotificationsIsActive { get; set; }
+
 
     }
 

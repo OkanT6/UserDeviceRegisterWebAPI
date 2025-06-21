@@ -7,9 +7,7 @@ using EruMobil.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace EruMobil.Application.Features.Devices.Commands.RegisterDevice
@@ -17,33 +15,81 @@ namespace EruMobil.Application.Features.Devices.Commands.RegisterDevice
     public class RegisterDeviceCommandHandler : BaseHandler, IRequestHandler<RegisterDeviceCommandRequest, Unit>
     {
         private readonly IObisisAPI obisisAPI;
+        private readonly IPeyosisAPI peyosisAPI;
         private readonly DevicesRules devicesRules;
 
-        public RegisterDeviceCommandHandler(IObisisAPI obisisAPI,IPeyosisAPI peyosisAPI,DevicesRules devicesRules,IMapper mapper, IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor) : base(mapper, unitOfWork, httpContextAccessor)
+        public RegisterDeviceCommandHandler(
+            IObisisAPI obisisAPI,
+            IPeyosisAPI peyosisAPI,
+            DevicesRules devicesRules,
+            IMapper mapper,
+            IUnitOfWork unitOfWork,
+            IHttpContextAccessor httpContextAccessor)
+            : base(mapper, unitOfWork, httpContextAccessor)
         {
             this.obisisAPI = obisisAPI;
+            this.peyosisAPI = peyosisAPI;
             this.devicesRules = devicesRules;
         }
 
         public async Task<Unit> Handle(RegisterDeviceCommandRequest request, CancellationToken cancellationToken)
         {
-            //if (request.UserType.ToLower() == "student")
-            //{
-            //    obisisAPI.IsStudentTokenValid(request.AccesToken, request.UserId.ToString());
-            //}
+            // 1. Kullanıcı doğrulama
+            if (request.UserType?.ToLower() == "student")
+            {
+                obisisAPI.IsStudentTokenValid(request.AccesToken);
+            }
+            else if (request.UserType?.ToLower() == "staff")
+            {
+                peyosisAPI.IsStaffTokenValid(request.AccesToken);
+            }
+            else
+            {
+                throw new Exception("User type is not valid.");
+            }
 
-            await devicesRules.DeviceShouldNotBeExisted(await unitOfWork.GetReadRepository<Device>().GetAsync(x => x.UniqueDeviceIdentifier == request.UniqueDeviceIdentifier));
+            // 2. Kullanıcıyı BusinessIdentifier üzerinden ara
+            var userRepo = unitOfWork.GetReadRepository<User>();
+            var existingUser = await userRepo.GetAsync(x => x.BusinessIdentifier == request.BusinessIdentifier);
 
-            await devicesRules.TargetUserMustExists(await unitOfWork.GetReadRepository<User>().GetAsync(x =>x.Id == request.UserId));
+            // 3. Kullanıcı yoksa oluştur
+            if (existingUser == null)
+            {
+                existingUser = new User
+                {
+                    BusinessIdentifier = request.BusinessIdentifier,
+                    UserType = request.UserType,
+                    access_token_when_register = request.AccesToken
+                };
 
-            Device device = mapper.Map<Device,RegisterDeviceCommandRequest>(request);
+                await unitOfWork.GetWriteRepository<User>().AddAsync(existingUser);
+                await unitOfWork.SaveAsync(); // ID üretimi için kaydet
+            }
 
-            await unitOfWork.GetWriteRepository<Device>().AddAsync(device);
+            // 4. Cihazı kontrol et
+            var deviceRepo = unitOfWork.GetReadRepository<Device>();
+            var existingDevice = await deviceRepo.GetAsync(x =>
+                x.UniqueDeviceIdentifier == request.UniqueDeviceIdentifier &&
+                x.UserId == existingUser.Id, enableTracking: true);
 
-            await unitOfWork.SaveAsync();
+            if (existingDevice != null)
+            {
+                // 5. Cihaz zaten varsa sadece bildirimi güncelle
+                existingDevice.NotificationsIsActive = request.NotificationBelIsActive;
+                await unitOfWork.SaveAsync();
+            }
+            else
+            {
+                // 6. Yeni cihaz ekle
+                var device = mapper.Map<Device, RegisterDeviceCommandRequest>(request);
+                device.UserId = existingUser.Id;
+                device.NotificationsIsActive = request.NotificationBelIsActive;
+
+                await unitOfWork.GetWriteRepository<Device>().AddAsync(device);
+                await unitOfWork.SaveAsync();
+            }
 
             return Unit.Value;
-
         }
     }
 }

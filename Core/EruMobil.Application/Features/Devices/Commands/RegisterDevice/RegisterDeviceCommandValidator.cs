@@ -11,9 +11,9 @@ namespace EruMobil.Application.Features.Devices.Commands.RegisterDevice
     {
         public RegisterDeviceCommandValidator()
         {
-            RuleFor(x => x.UserId)
-                .NotEmpty().WithMessage("User ID cannot be empty.")
-                .Must(x => x != Guid.Empty).WithMessage("User ID must be a valid GUID.");
+            //RuleFor(x => x.UserId)
+            //    .NotEmpty().WithMessage("User ID cannot be empty.")
+            //    .Must(x => x != Guid.Empty).WithMessage("User ID must be a valid GUID.");
             RuleFor(x => x.UniqueDeviceIdentifier)
                 .NotEmpty().WithMessage("Unique Device Identifier cannot be empty.")
                 .Length(1, 100).WithMessage("Unique Device Identifier must be between 1 and 100 characters long.");

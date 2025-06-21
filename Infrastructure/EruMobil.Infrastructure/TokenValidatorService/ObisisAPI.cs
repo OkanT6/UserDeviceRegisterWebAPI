@@ -21,6 +21,16 @@ namespace EruMobil.Infrastructure.TokenValidatorService
                 return Task.FromResult(false);
             }
 
+            // Bundan sonra "Bearer " trim edilecek ve token elde edilecek!
+            string token = accessTokenObisis.Substring("Bearer ".Length).Trim();
+
+            // Token boşsa yine geçersiz sayılabilir
+            if (string.IsNullOrEmpty(token))
+            {
+                return Task.FromResult(false);
+            }
+
+            // Token işleme devam edilebilir
             return Task.FromResult(true);
         }
     }

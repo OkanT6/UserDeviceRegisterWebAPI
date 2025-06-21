@@ -9,7 +9,7 @@ namespace EruMobil.Application.Features.Devices.Commands.RegisterDevice
 {
     public class RegisterDeviceCommandRequest : IRequest<Unit>
     {
-        public Guid UserId { get; set; } // Kullanıcının ID'si
+        //public Guid UserId { get; set; } // Kullanıcının ID'si
         public string DeviceName { get; set; }
         public string UniqueDeviceIdentifier { get; set; }
         public string Platform { get; set; } // "android" veya "ios"
@@ -19,6 +19,13 @@ namespace EruMobil.Application.Features.Devices.Commands.RegisterDevice
         public string AccesToken { get; set; }
 
         public string UserType { get; set; } // "student" veya "staff"
+
+        public string BusinessIdentifier { get; set; }
+
+
+        public bool NotificationBelIsActive { get; set; }
+
+
     }
 
     /*

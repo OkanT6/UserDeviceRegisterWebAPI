@@ -32,7 +32,7 @@ namespace EruMobil.Domain.Entities
 
         public ICollection<Device> Devices { get; set; }
 
-        public string FullName { get; set; }
+        //public string FullName { get; set; }
 
         //public string? RefreshToken { get; set; }
 

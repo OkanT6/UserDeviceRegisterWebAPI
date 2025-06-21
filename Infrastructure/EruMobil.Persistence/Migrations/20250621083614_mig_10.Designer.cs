@@ -3,6 +3,7 @@ using System;
 using EruMobil.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EruMobil.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250621083614_mig_10")]
+    partial class mig_10
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -76,6 +79,10 @@ namespace EruMobil.Persistence.Migrations
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");

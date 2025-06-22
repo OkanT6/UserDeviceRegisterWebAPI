@@ -11,9 +11,7 @@ namespace EruMobil.Application.Features.Devices.Commands.RegisterDevice
     {
         public RegisterDeviceCommandValidator()
         {
-            //RuleFor(x => x.UserId)
-            //    .NotEmpty().WithMessage("User ID cannot be empty.")
-            //    .Must(x => x != Guid.Empty).WithMessage("User ID must be a valid GUID.");
+            
 
 
 
@@ -36,7 +34,7 @@ namespace EruMobil.Application.Features.Devices.Commands.RegisterDevice
                 .NotEmpty().WithMessage("AccesToken cannot be empty.");
             RuleFor(x => x.BusinessIdentifier)
                 .NotEmpty().WithMessage("BusinessIdentifier cannot be empty.")
-                .Matches(@"^\d{10}$").WithMessage("BusinessIdentifier must be exactly 11 digits and contain only numbers.");
+                .Matches(@"^\d{10}$").WithMessage("BusinessIdentifier must be exactly 10 digits and contain only numbers.");
 
 
         }

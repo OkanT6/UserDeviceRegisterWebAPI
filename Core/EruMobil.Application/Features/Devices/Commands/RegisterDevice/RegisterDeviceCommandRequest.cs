@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace EruMobil.Application.Features.Devices.Commands.RegisterDevice
 {
-    public class RegisterDeviceCommandRequest : IRequest<Unit>
+    public class RegisterDeviceCommandRequest : IRequest<RegisterDeviceCommandResponse>
     {
-        //public Guid UserId { get; set; } // Kullanıcının ID'si
+        public string? CurrentApiKey { get; set; }
         public string DeviceName { get; set; }
         public string UniqueDeviceIdentifier { get; set; }
         public string Platform { get; set; } // "android" veya "ios"

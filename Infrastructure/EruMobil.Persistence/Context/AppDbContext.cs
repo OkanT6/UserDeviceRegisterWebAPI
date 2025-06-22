@@ -19,6 +19,8 @@ namespace EruMobil.Persistence.Context
         public DbSet<User> Users { get; set; }
         public DbSet<Device> Devices { get; set; }
 
+        public DbSet<ApiKey> ApiKeys { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

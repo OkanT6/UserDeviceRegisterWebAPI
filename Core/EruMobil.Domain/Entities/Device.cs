@@ -9,6 +9,10 @@ namespace EruMobil.Domain.Entities
 {
     public class Device:IEntityBase
     {
+        public Device()
+        {
+            ApiKeys = new List<ApiKey>();
+        }
         public int Id { get; set; } // Primary key
 
         public string DeviceName { get; set; }
@@ -23,6 +27,11 @@ namespace EruMobil.Domain.Entities
         public int UserId { get; set; } // Foreign Key
 
         public User User { get; set; }
+
+        public bool NotificationsIsActive { get; set; }
+
+
+        public ICollection<ApiKey> ApiKeys { get; set; } = new List<ApiKey>();
 
 
 

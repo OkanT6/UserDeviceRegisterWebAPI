@@ -16,7 +16,7 @@ namespace EruMobil.Infrastructure
     {
         public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddSingleton<IObisisAPI, ObisisAPI>();
+            services.AddHttpClient<IObisisAPI, ObisisAPI>();
 
             services.AddSingleton<IPeyosisAPI, PeyosisAPI>();
 

@@ -1,37 +1,52 @@
-﻿using EruMobil.Application.Interfaces.ObisisService;
+﻿using EruMobil.Application.Features.Devices.Exceptions.AccessTokenExceptions;
+using EruMobil.Application.Interfaces.ObisisService;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace EruMobil.Infrastructure.TokenValidatorService
 {
     public class PeyosisAPI:IPeyosisAPI
     {
-        public Task<bool> IsStaffTokenValid(string accessTokenObisis)
+        private readonly HttpClient httpClient;
+        private readonly string apiUrl;
+
+        public PeyosisAPI(HttpClient httpClient, IConfiguration configuration)
         {
-            if (string.IsNullOrEmpty(accessTokenObisis))
+            this.httpClient = httpClient;
+            apiUrl = configuration["PeyosisApiUrl"];
+        }
+        public async Task<bool> IsStaffTokenValid(string accessToken)
+        {
+            try
             {
-                return Task.FromResult(false);
-            }
+                if (!Uri.TryCreate(apiUrl, UriKind.Absolute, out var uri))
+                {
+                    Console.WriteLine("Geçersiz URL formatı: " + apiUrl);
+                    return false;
+                }
 
-            if (!accessTokenObisis.StartsWith("Bearer "))
+                var request = new HttpRequestMessage(HttpMethod.Get, uri);
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+                var response = await httpClient.SendAsync(request);
+                return response.IsSuccessStatusCode;
+            }
+            catch (InvalidOperationException ex)
             {
-                return Task.FromResult(false);
+                Console.WriteLine($"URL hatası: {ex.Message}");
+                return false;
             }
-
-            // Bundan sonra "Bearer " trim edilecek ve token elde edilecek!
-            string token = accessTokenObisis.Substring("Bearer ".Length).Trim();
-
-            // Token boşsa yine geçersiz sayılabilir
-            if (string.IsNullOrEmpty(token))
+            catch (Exception ex)
             {
-                return Task.FromResult(false);
+                Console.WriteLine($"Genel hata: {ex.Message}");
+                return false;
             }
-
-            // Token işleme devam edilebilir
-            return Task.FromResult(true);
         }
 
     }

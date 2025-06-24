@@ -23,7 +23,7 @@ namespace EruMobil.Application.Features.Devices.Commands.RegisterDevice
         public string BusinessIdentifier { get; set; }
 
 
-        public bool NotificationBelIsActive { get; set; }
+        public bool NotificationsIsActive { get; set; }
 
 
     }

@@ -8,12 +8,14 @@
 
   <ItemGroup>
     <PackageReference Include="DeviceDetector.NET" Version="6.4.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.5" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.5" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Core\EruMobil.Application\EruMobil.Application.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ApiKeyService\" />
   </ItemGroup>
 
 </Project>

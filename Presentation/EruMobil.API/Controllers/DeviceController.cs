@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace EruMobil.API.Controllers
 {
@@ -17,6 +18,7 @@ namespace EruMobil.API.Controllers
         }
 
         [HttpPost]
+        [EnableRateLimiting("IPPolicy")]
         public async Task<IActionResult> RegisterDevice([FromBody] RegisterDeviceCommandRequest request)
         {
             var result = await mediator.Send(request);

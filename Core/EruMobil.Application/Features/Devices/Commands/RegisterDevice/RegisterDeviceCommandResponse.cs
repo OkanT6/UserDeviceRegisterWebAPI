@@ -10,6 +10,5 @@ namespace EruMobil.Application.Features.Devices.Commands.RegisterDevice
     {
         public bool IsNewUser { get; set; }
         public bool IsNewDevice { get; set; }
-        public string ApiKey { get; set; } = string.Empty;
     }
 }

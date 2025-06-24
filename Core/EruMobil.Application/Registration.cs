@@ -12,6 +12,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Serilog;
+
 
 
 
@@ -24,6 +26,12 @@ namespace EruMobil.Application
         {
             var assembly = Assembly.GetExecutingAssembly();
 
+            // Logger servisini ekle
+            services.AddLogging(loggingBuilder =>
+            {
+                loggingBuilder.AddSerilog(dispose: true);
+            });
+
             services.AddTransient<ExceptionMiddleware>();
 
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
@@ -32,6 +40,9 @@ namespace EruMobil.Application
             ValidatorOptions.Global.LanguageManager.Culture = new CultureInfo("tr");
 
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(FluentValidationBehevior<,>));
+
+            // Pipeline Behavior olarak Logging Behavior ekle
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
 
             services.AddRulesFromAssemblyContaining(assembly, typeof(BaseRules));
 

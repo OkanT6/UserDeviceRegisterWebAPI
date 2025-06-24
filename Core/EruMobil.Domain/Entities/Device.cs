@@ -11,7 +11,6 @@ namespace EruMobil.Domain.Entities
     {
         public Device()
         {
-            ApiKeys = new List<ApiKey>();
         }
         public int Id { get; set; } // Primary key
 
@@ -31,7 +30,6 @@ namespace EruMobil.Domain.Entities
         public bool NotificationsIsActive { get; set; }
 
 
-        public ICollection<ApiKey> ApiKeys { get; set; } = new List<ApiKey>();
 
 
 

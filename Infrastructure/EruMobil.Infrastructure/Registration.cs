@@ -1,6 +1,5 @@
 ﻿using EruMobil.Application.Interfaces.ObisisService;
 using EruMobil.Infrastructure.TokenValidatorService;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -24,25 +23,25 @@ namespace EruMobil.Infrastructure
 
             
 
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, opt =>
-            {
-                opt.SaveToken = true;
-                opt.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateAudience = false,
-                    ValidateIssuer = false,
-                    ValidateLifetime = false, // Do not validate the token's lifetime
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = configuration["Jwt:Issuer"],
-                    ValidAudience = configuration["Jwt:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Secret"])),
-                    ClockSkew = TimeSpan.Zero // Remove the delay of token when expired
-                };
-            });
+            //services.AddAuthentication(options =>
+            //{
+            //    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            //    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            //}).AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, opt =>
+            //{
+            //    opt.SaveToken = true;
+            //    opt.TokenValidationParameters = new TokenValidationParameters
+            //    {
+            //        ValidateAudience = false,
+            //        ValidateIssuer = false,
+            //        ValidateLifetime = false, // Do not validate the token's lifetime
+            //        ValidateIssuerSigningKey = true,
+            //        ValidIssuer = configuration["Jwt:Issuer"],
+            //        ValidAudience = configuration["Jwt:Audience"],
+            //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Secret"])),
+            //        ClockSkew = TimeSpan.Zero // Remove the delay of token when expired
+            //    };
+            //});
 
 
 

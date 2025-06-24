@@ -1,111 +1,137 @@
-﻿using EruMobil.Application;
+﻿
+using Serilog;
+using Serilog.Events;
+using EruMobil.Application;
 using EruMobil.Mapper;
 using EruMobil.Persistence;
 using Microsoft.OpenApi.Models;
 using EruMobil.Application.Exceptions;
 using EruMobil.Infrastructure;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// 1. Serilog Konfigürasyonu (builder'dan sonra)
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Debug()
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+    .Enrich.FromLogContext()
+    .Enrich.WithMachineName()
+    .Enrich.WithProcessId()
+    .Enrich.WithEnvironmentName()
+    .WriteTo.Console()
+    .WriteTo.Seq(
+        serverUrl: "http://localhost:5341",
+        apiKey: builder.Configuration["Seq:ApiKey"])
+    .CreateLogger();
 
-builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-
-builder.Services.AddSwaggerGen();
-builder.Services.AddHttpContextAccessor(); // ⬅️ Bunu ekle!
-builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
-builder.Services.AddPersistence(builder.Configuration);
-builder.Services.AddInfrastructure(builder.Configuration);
-builder.Services.AddApplication();
-builder.Services.AddCustomMapper();
-
-// MediatR'ı manuel olarak ekleyin (eğer AddApplication'da yoksa)
-builder.Services.AddMediatR(cfg =>
+try
 {
-    cfg.RegisterServicesFromAssembly(typeof(EruMobil.Application.Features.Auth.Commands.Register.RegisterCommandHandler).Assembly);
-});
+    // 2. Logging Provider'ını Serilog olarak ayarla
+    builder.Host.UseSerilog();
 
-var env = builder.Environment;
+    // Add services to the container.
+    builder.Services.AddControllers();
+    builder.Services.AddOpenApi();
+    builder.Services.AddSwaggerGen();
+    builder.Services.AddHttpContextAccessor();
+    builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-builder.Configuration
-    .SetBasePath(env.ContentRootPath)
-    .AddJsonFile("appsettings.json", optional: false)
-    .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+    builder.Services.AddPersistence(builder.Configuration);
+    builder.Services.AddInfrastructure(builder.Configuration);
+    builder.Services.AddApplication();
+    builder.Services.AddCustomMapper();
 
 
-builder.WebHost.ConfigureKestrel(options =>
-{
-    options.Listen(System.Net.IPAddress.Any, 5000); // HTTP
-    options.Listen(System.Net.IPAddress.Any, 5001, listenOptions =>
+
+    var env = builder.Environment;
+
+    builder.Configuration
+        .SetBasePath(env.ContentRootPath)
+        .AddJsonFile("appsettings.json", optional: false)
+        .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+
+    builder.WebHost.ConfigureKestrel(options =>
     {
-        listenOptions.UseHttps();
-    });
-});
-
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
-    {
-        Title = "EruMobil API",
-        Version = "v1",
-        Description = "EruMobil API Documentation"
-    });
-    c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme()
-    {
-        Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer",
-        BearerFormat = "JWT",
-        In = ParameterLocation.Header,
-        Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 12345abcdef\"",
-    });
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
+        options.Listen(System.Net.IPAddress.Any, 5000); // HTTP
+        options.Listen(System.Net.IPAddress.Any, 5001, listenOptions =>
         {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            new string[] {}
-        }
+            listenOptions.UseHttps();
+        });
     });
-});
 
-// 🔥 CORS EKLENİYOR
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll", policy =>
+    // 3. Rate Limiting Loglama Entegrasyonu
+    builder.Services.AddRateLimiter(options =>
     {
-        policy.WithOrigins("http://192.168.43.135:5000", "https://192.168.43.135:5001")
-              .AllowAnyHeader()
-              .AllowAnyMethod();
+        options.OnRejected = (context, cancellationToken) =>
+        {
+            var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
+            logger.LogWarning("Rate limit exceeded for {IP}. Path: {Path}",
+                context.HttpContext.Connection.RemoteIpAddress,
+                context.HttpContext.Request.Path);
+            return ValueTask.CompletedTask;
+        };
+
+        options.AddPolicy("IPPolicy", context =>
+        {
+            var ip = context.Connection.RemoteIpAddress ?? System.Net.IPAddress.None;
+            var ipString = ip.ToString();
+
+            return RateLimitPartition.GetFixedWindowLimiter(
+                partitionKey: ipString,
+                factory: partition => new FixedWindowRateLimiterOptions
+                {
+                    PermitLimit = 5,
+                    Window = TimeSpan.FromSeconds(50),
+                    QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                    QueueLimit = 2
+                });
+        });
     });
-});
 
-var app = builder.Build();
+    builder.Services.AddSwaggerGen(c =>
+    {
+        c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+        {
+            Title = "EruMobil API",
+            Version = "v1",
+            Description = "EruMobil API Documentation"
+        });
+    });
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("AllowAll", policy =>
+        {
+            policy.WithOrigins("http://10.102.149.114:5000", "https://10.102.149.114:5001")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+    });
+
+    var app = builder.Build();
+
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
+    app.ConfigureExceptionHandlingMiddleware();
+
+    app.UseHttpsRedirection();
+    app.UseRouting();
+    app.UseRateLimiter();
+    app.UseAuthentication();
+    app.UseAuthorization();
+    app.MapControllers();
+
+    app.Run();
 }
-app.ConfigureExceptionHandlingMiddleware();
-
-// Önemli sıralama:
-app.UseHttpsRedirection();
-
-app.UseRouting();
-
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Uygulama başlatılamadı");
+}
+finally
+{
+    Log.CloseAndFlush();
+}

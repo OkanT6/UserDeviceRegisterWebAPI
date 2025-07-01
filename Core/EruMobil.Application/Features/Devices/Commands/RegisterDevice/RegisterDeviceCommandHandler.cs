@@ -160,7 +160,7 @@ namespace EruMobil.Application.Features.Devices.Commands.RegisterDevice
                     else
                     {
                         //(Loglama yapabiliriz)
-                        logger.LogError(
+                        logger.LogWarning(
                 "Device conflict! Device {DeviceId} belongs to user {OwnerId} but accessed by {RequestedUser}",
                 usingDevice.Id, usingDevice.UserId, loggedInUser.Id);
 

@@ -82,7 +82,7 @@ try
                 factory: partition => new FixedWindowRateLimiterOptions
                 {
                     PermitLimit = 5,
-                    Window = TimeSpan.FromSeconds(50),
+                    Window = TimeSpan.FromSeconds(50), 
                     QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
                     QueueLimit = 2
                 });
@@ -103,7 +103,7 @@ try
     {
         options.AddPolicy("AllowAll", policy =>
         {
-            policy.WithOrigins("http://10.102.149.114:5000", "https://10.102.149.114:5001")
+            policy.WithOrigins("http://10.130.0.48:5000", "https://10.130.0.48:5001")
                   .AllowAnyHeader()
                   .AllowAnyMethod();
         });

@@ -47,23 +47,29 @@ namespace EruMobil.Application.Features.Devices.Commands.RegisterDevice
             // 1. Kullanıcı doğrulama accessToken ile
             if (request.UserType?.ToLower() == "student")
             {
+                // Obisis API'si üzerinden öğrenci doğrulaması yapıyoruz
+                // Development ortamında gerçek ObisisAPI url'si kullanılmadığı için her halükülarda 404 hatası dönecektir
+                // Bu yüzden alttaki if bloğunda'da herhangi bir işlem yapılmamaktadır ama production ortamında yorum satırı kaldırılıp yapılmalıdır.
                 bool isTokenValid = await obisisAPI.IsStudentTokenValid(request.AccesToken);
 
                 if (isTokenValid == false)
                 {
 
-                    //throw new Exception("Invalid token"); 
+                    // Production ortamında bu kısımda bir exception fırlatabiliriz ve loglamaya dahil edebiliriz
+                    //throw new Exception("Invalid token");  
                 }
             }
             else if (request.UserType?.ToLower() == "staff")
             {
 
-
+                // Peyosis API'si üzerinden personel doğrulaması yapıyoruz
+                // Development ortamında gerçek PeyosisAPI url'si kullanılmadığı için her halükülarda 404 hatası dönecektir
+                // Bu yüzden alttaki if bloğunda'da herhangi bir işlem yapılmamaktadır ama production ortamında yorum satırı kaldırılıp yapılmalıdır.
                 bool isTokenValid = await peyosisAPI.IsStaffTokenValid(request.AccesToken);
 
                 if (isTokenValid == false)
                 {
-
+                    // Production ortamında bu kısımda bir exception fırlatabiliriz ve loglamaya dahil edebiliriz
                     //throw new Exception("Invalid token");
                 }
             }
@@ -75,10 +81,10 @@ namespace EruMobil.Application.Features.Devices.Commands.RegisterDevice
             // 2. Kullanıcı doğrulama apiKey ile
             if (!string.IsNullOrEmpty(request.CurrentApiKey))
             {
-                //Api Key yanlış ise tespit edeceğiz (Loglama yapabiliriz)
+                //Api Key yanlış ise tespit edeceğiz (Loglama yapıyoruz)
                 if (request.CurrentApiKey != apiKey)
                 {
-                    //(Loglama yapabiliriz)
+                    //(Loglama yapıyoruz)
                     var ip = httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
                     logger.LogWarning("Invalid API key attempt from {IP} for {BusinessIdentifier}", ip, request.BusinessIdentifier);
                     throw new Exception("Invalid API key.");
@@ -91,11 +97,7 @@ namespace EruMobil.Application.Features.Devices.Commands.RegisterDevice
                 var loggedInUser = await unitOfWork.GetReadRepository<User>()
                     .GetAsync(u => u.BusinessIdentifier == request.BusinessIdentifier, enableTracking: true);
 
-                //if(usingDevice !=null)
-                //{
-                //    var registeredDeviceUser = await unitOfWork.GetReadRepository<User>()
-                //    .GetAsync(u => u.Id == usingDevice.UserId, enableTracking: true);
-                //}
+                
 
                 if (usingDevice == null)
                 {
@@ -159,10 +161,12 @@ namespace EruMobil.Application.Features.Devices.Commands.RegisterDevice
                     // Cihaz başka bir kullanıcıya ait, bu durumda alarm verip loglama yapacağız
                     else
                     {
-                        //(Loglama yapabiliriz)
+                        var ip = httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
+
+                        //(Loglama yapıyoruz)
                         logger.LogWarning(
-                "Device conflict! Device {DeviceId} belongs to user {OwnerId} but accessed by {RequestedUser}",
-                usingDevice.Id, usingDevice.UserId, loggedInUser.Id);
+                "Device conflict! Device {DeviceId} belongs to user {OwnerId} but accessed by {RequestedUser} from {IP} ip & from {BusinessIdentifier} businessIdentifer",
+                usingDevice.Id, usingDevice.UserId, loggedInUser.Id, ip,loggedInUser.BusinessIdentifier);
 
                         throw new Exception("Device is already registered to another user.");
 

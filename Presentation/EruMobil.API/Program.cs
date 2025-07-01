@@ -11,7 +11,7 @@ using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Serilog Konfigürasyonu (builder'dan sonra)
+// Serilog Konfigürasyonu (builder'dan sonra)
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
     .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
@@ -27,23 +27,24 @@ Log.Logger = new LoggerConfiguration()
 
 try
 {
-    // 2. Logging Provider'ını Serilog olarak ayarla
+    // Logging Provider'ını Serilog olarak ayarla
     builder.Host.UseSerilog();
 
-    // Add services to the container.
+    // Add services to the container. (Servisler)
     builder.Services.AddControllers();
     builder.Services.AddOpenApi();
     builder.Services.AddSwaggerGen();
     builder.Services.AddHttpContextAccessor();
     builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
+    // Katmanlardaki Servis Bağımlılıklarının eklenmesi
     builder.Services.AddPersistence(builder.Configuration);
     builder.Services.AddInfrastructure(builder.Configuration);
     builder.Services.AddApplication();
     builder.Services.AddCustomMapper();
 
 
-
+    //Ortam Belirleme
     var env = builder.Environment;
 
     builder.Configuration
@@ -51,6 +52,8 @@ try
         .AddJsonFile("appsettings.json", optional: false)
         .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
 
+
+    // Kestrel Sunucusu Konfigürasyonu Dinlenecek Port Numarasının belirlenmesi
     builder.WebHost.ConfigureKestrel(options =>
     {
         options.Listen(System.Net.IPAddress.Any, 5000); // HTTP
@@ -60,7 +63,7 @@ try
         });
     });
 
-    // 3. Rate Limiting Loglama Entegrasyonu
+    // Rate Limiting Loglama Entegrasyonu
     builder.Services.AddRateLimiter(options =>
     {
         options.OnRejected = (context, cancellationToken) =>
@@ -89,6 +92,7 @@ try
         });
     });
 
+    // Swagger Konfigürasyonu
     builder.Services.AddSwaggerGen(c =>
     {
         c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
@@ -99,27 +103,33 @@ try
         });
     });
 
+    // CORS Konfigürasyonu
     builder.Services.AddCors(options =>
     {
         options.AddPolicy("AllowAll", policy =>
         {
-            policy.WithOrigins("http://10.130.0.48:5000", "https://10.130.0.48:5001")
+            policy.WithOrigins("http://10.102.149.147:5000", "https://10.102.149.147:5001") // Bu ip sunucumuzun (web api'mizin) bulunduğu ip'dir
                   .AllowAnyHeader()
                   .AllowAnyMethod();
         });
     });
 
+
     var app = builder.Build();
 
+    // Eğer ortam geliştirme ise Swagger'ı etkinleştir
     if (app.Environment.IsDevelopment())
     {
         app.UseSwagger();
         app.UseSwaggerUI();
     }
+
+    // Global Exception Handling Middleware
     app.ConfigureExceptionHandlingMiddleware();
 
     app.UseHttpsRedirection();
     app.UseRouting();
+    // RateLimiting Middleware'inin eklenmesi
     app.UseRateLimiter();
     app.UseAuthentication();
     app.UseAuthorization();

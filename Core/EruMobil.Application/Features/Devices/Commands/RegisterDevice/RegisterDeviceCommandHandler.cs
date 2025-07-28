@@ -152,8 +152,41 @@ namespace EruMobil.Application.Features.Devices.Commands.RegisterDevice
                 }
                 else
                 {
+                    // Cihaz var ama kullanıcı yeni user_type ile diğer uygulamaya girmiş.
+                    // Onu da farklı kullanıcı olarak kaydedip o cihazını da yeniden aynı bilgilerle
+                    // yeni Id ile 2. defa kaydediriz.
+
+                    if (loggedInUser == null)
+                    {
+                        //LoggedInUser kayıtlı değilmiş demek
+
+                        // Yeni kullanıcı oluştur
+                        loggedInUser = new User
+                        {
+                            BusinessIdentifier = request.BusinessIdentifier,
+                            UserType = request.UserType,
+                            access_token_when_register = request.AccesToken,
+                        };
+                        isNewUser = true;
+                        await unitOfWork.GetWriteRepository<User>().AddAsync(loggedInUser);
+                        await unitOfWork.SaveAsync();
+
+
+                        // Sonra o kullanıcını üstüne cihaz kaydı da yapacağız
+
+                        var device = mapper.Map<Device, RegisterDeviceCommandRequest>(request);
+                        device.UserId = loggedInUser.Id;
+
+                        await unitOfWork.GetWriteRepository<Device>().AddAsync(device);
+                        await unitOfWork.SaveAsync();
+
+                        isNewDevice = true;
+                    }
+
+
+
                     // Cihaz ve kullanıcı zaten kayıtlı, bildirim güncellemesi yapacağız
-                    if (usingDevice.UserId == loggedInUser.Id)
+                    else if (usingDevice.UserId == loggedInUser.Id)
                     {
                         usingDevice.NotificationsIsActive = request.NotificationsIsActive;
                         await unitOfWork.SaveAsync();

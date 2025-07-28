@@ -97,7 +97,7 @@ namespace EruMobil.Application.Features.Devices.Commands.RegisterDevice
                 var loggedInUser = await unitOfWork.GetReadRepository<User>()
                     .GetAsync(u => u.BusinessIdentifier == request.BusinessIdentifier, enableTracking: true);
 
-                
+
 
                 if (usingDevice == null)
                 {
@@ -105,7 +105,7 @@ namespace EruMobil.Application.Features.Devices.Commands.RegisterDevice
 
                     //Önce kullanıcıyı kontrol edeceğiz
 
-                    
+
                     if (loggedInUser == null)
                     {
                         //LoggedInUser kayıtlı değilmiş demek
@@ -152,8 +152,41 @@ namespace EruMobil.Application.Features.Devices.Commands.RegisterDevice
                 }
                 else
                 {
+                    // Cihaz var ama kullanıcı yeni user_type ile diğer uygulamaya girmiş.
+                    // Onu da farklı kullanıcı olarak kaydedip o cihazını da yeniden aynı bilgilerle
+                    // yeni Id ile 2. defa kaydediriz.
+
+                    if (loggedInUser == null)
+                    {
+                        //LoggedInUser kayıtlı değilmiş demek
+
+                        // Yeni kullanıcı oluştur
+                        loggedInUser = new User
+                        {
+                            BusinessIdentifier = request.BusinessIdentifier,
+                            UserType = request.UserType,
+                            access_token_when_register = request.AccesToken,
+                        };
+                        isNewUser = true;
+                        await unitOfWork.GetWriteRepository<User>().AddAsync(loggedInUser);
+                        await unitOfWork.SaveAsync();
+
+
+                        // Sonra o kullanıcını üstüne cihaz kaydı da yapacağız
+
+                        var device = mapper.Map<Device, RegisterDeviceCommandRequest>(request);
+                        device.UserId = loggedInUser.Id;
+
+                        await unitOfWork.GetWriteRepository<Device>().AddAsync(device);
+                        await unitOfWork.SaveAsync();
+
+                        isNewDevice = true;
+                    }
+
+
+
                     // Cihaz ve kullanıcı zaten kayıtlı, bildirim güncellemesi yapacağız
-                    if (usingDevice.UserId == loggedInUser.Id)
+                    else if (usingDevice.UserId == loggedInUser.Id)
                     {
                         usingDevice.NotificationsIsActive = request.NotificationsIsActive;
                         await unitOfWork.SaveAsync();
@@ -166,7 +199,7 @@ namespace EruMobil.Application.Features.Devices.Commands.RegisterDevice
                         //(Loglama yapıyoruz)
                         logger.LogWarning(
                 "Device conflict! Device {DeviceId} belongs to user {OwnerId} but accessed by {RequestedUser} from {IP} ip & from {BusinessIdentifier} businessIdentifer",
-                usingDevice.Id, usingDevice.UserId, loggedInUser.Id, ip,loggedInUser.BusinessIdentifier);
+                usingDevice.Id, usingDevice.UserId, loggedInUser.Id, ip, loggedInUser.BusinessIdentifier);
 
                         throw new Exception("Device is already registered to another user.");
 
@@ -176,8 +209,8 @@ namespace EruMobil.Application.Features.Devices.Commands.RegisterDevice
                 }
             }
             else
-            {            
-                
+            {
+
                 //(Loglama yapabiliriz)
                 //Eğer ApiKey yoksa isteği reddeceğiz.
 
@@ -192,6 +225,6 @@ namespace EruMobil.Application.Features.Devices.Commands.RegisterDevice
                 IsNewUser = isNewUser,
                 IsNewDevice = isNewDevice,
             };
-        } 
+        }
     }
 }
